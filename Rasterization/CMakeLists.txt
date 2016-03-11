@@ -3,5 +3,5 @@ project(Rasterization)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.cpp)
-add_executable(Rasterization ${SOURCE_FILES})
+aux_source_directory(. DIR_SRCS)
+add_executable(Rasterization ${DIR_SRCS})

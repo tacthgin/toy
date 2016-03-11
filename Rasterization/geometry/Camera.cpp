@@ -5,7 +5,7 @@ Camera::Camera() {
 
 }
 
-Camera::Camera(Camera::CameraType t, const Vec4 &p, const Vec4 &d, const Vec4 &uvnTarget, float nearZ, float farZ,
+Camera::Camera(Camera::CameraType t, const Vector4d &p, const Vector4d &d, const Vector4d &uvnTarget, float nearZ, float farZ,
                float fovAngle, float width, float height)
 :_type(t)
 ,_pos(p)
@@ -16,12 +16,12 @@ Camera::Camera(Camera::CameraType t, const Vec4 &p, const Vec4 &d, const Vec4 &u
 ,_fov(fovAngle)
 ,_viewportWidth(width)
 ,_viewportHeight(height)
-,u(Vec4(1, 0, 0, 0))
-,v(Vec4(0, 1, 0, 0))
-,n(Vec4(0, 0, 1, 0))
-,_worldToCam(Mat4::IDENTITY)
-,_camToProj(Mat4::IDENTITY)
-,_projToView(Mat4::IDENTITY)
+,u(Vector4d(1, 0, 0, 0))
+,v(Vector4d(0, 1, 0, 0))
+,n(Vector4d(0, 0, 1, 0))
+,_worldToCam(Matrix4d::IDENTITY)
+,_camToProj(Matrix4d::IDENTITY)
+,_projToView(Matrix4d::IDENTITY)
 {
     _viewportCenterX = (_viewportWidth - 1) / 2;
     _viewportCenterY = (_viewportHeight - 1) / 2;
@@ -36,21 +36,21 @@ Camera::Camera(Camera::CameraType t, const Vec4 &p, const Vec4 &d, const Vec4 &u
 
     if (_fov == 90.0)
     {
-        _rightClipPlane.normal = Vec3(1, 0, -1);
-        _leftClipPlane.normal = Vec3(-1, 0, -1);
-        _upClipPlane.normal = Vec3(0, 1, -1);
-        _downClipPlane.normal = Vec3(0, -1, -1);
+        _rightClipPlane.normal = Vector3d(1, 0, -1);
+        _leftClipPlane.normal = Vector3d(-1, 0, -1);
+        _upClipPlane.normal = Vector3d(0, 1, -1);
+        _downClipPlane.normal = Vector3d(0, -1, -1);
     }else
     {
-        _rightClipPlane.normal = Vec3(_viewDish, 0, -_viewPlaneWidth / 2);
-        _leftClipPlane.normal = Vec3(-_viewDish, 0, -_viewPlaneWidth / 2);
-        _upClipPlane.normal = Vec3(0, _viewDish, -_viewPlaneWidth / 2);
-        _downClipPlane.normal = Vec3(0, -_viewDish, -_viewPlaneWidth / 2);
+        _rightClipPlane.normal = Vector3d(_viewDish, 0, -_viewPlaneWidth / 2);
+        _leftClipPlane.normal = Vector3d(-_viewDish, 0, -_viewPlaneWidth / 2);
+        _upClipPlane.normal = Vector3d(0, _viewDish, -_viewPlaneWidth / 2);
+        _downClipPlane.normal = Vector3d(0, -_viewDish, -_viewPlaneWidth / 2);
     }
 }
 
 void Camera::createEluerMatrix(Camera::CamerarRotate rotate) {
-    Mat4 t(1, 0, 0, 0,
+    Matrix4d t(1, 0, 0, 0,
                0, 1, 0, 0,
                0, 0, 1, 0,
                -_pos.x, -_pos.y, -_pos.z, 1);
@@ -62,7 +62,7 @@ void Camera::createEluerMatrix(Camera::CamerarRotate rotate) {
     float cosTheta = cos(thetaX);
     float sinTheta = -sin(thetaX);
 
-    Mat4 rx(1, 0, 0, 0,
+    Matrix4d rx(1, 0, 0, 0,
             0, cosTheta, sinTheta, 0,
             0, -sinTheta, cosTheta, 0,
             0, 0, 0, 1);
@@ -70,7 +70,7 @@ void Camera::createEluerMatrix(Camera::CamerarRotate rotate) {
     cosTheta = cos(thetaY);
     sinTheta = -sin(thetaY);
 
-    Mat4 ry(cosTheta, 0, -sinTheta, 0,
+    Matrix4d ry(cosTheta, 0, -sinTheta, 0,
             0, 1, 0, 0,
             sinTheta, 0, cosTheta, 0,
             0, 0, 0, 1);
@@ -78,11 +78,11 @@ void Camera::createEluerMatrix(Camera::CamerarRotate rotate) {
     cosTheta = cos(thetaZ);
     sinTheta = -sin(thetaZ);
 
-    Mat4 rz(cosTheta, sinTheta, 0, 0,
+    Matrix4d rz(cosTheta, sinTheta, 0, 0,
             -sinTheta, cosTheta, 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1);
-    Mat4 temp;
+    Matrix4d temp;
     switch (rotate)
     {
         case CAMERA_ROTATE_XYZ:
@@ -120,7 +120,7 @@ void Camera::createEluerMatrix(Camera::CamerarRotate rotate) {
 }
 
 void Camera::createUVNMatrix(Camera::UVNMode mode) {
-    Mat4 t(1, 0, 0, 0,
+    Matrix4d t(1, 0, 0, 0,
            0, 1, 0, 0,
            0, 0, 1, 0,
            -_pos.x, -_pos.y, -_pos.z, 1);
@@ -141,8 +141,8 @@ void Camera::createUVNMatrix(Camera::UVNMode mode) {
         _target.z = sinPhi * cosTheta;
     }
 
-    n = Vec4(_pos, _target);
-    v = Vec4(0, 1, 0, 0);
+    n = Vector4d(_pos, _target);
+    v = Vector4d(0, 1, 0, 0);
     u = v.cross(n);
     v = n.cross(u);
 
@@ -150,7 +150,7 @@ void Camera::createUVNMatrix(Camera::UVNMode mode) {
     v.normalize();
     n.normalize();
 
-    Mat4 r(u.x, v.x, n.x, 0,
+    Matrix4d r(u.x, v.x, n.x, 0,
            u.y, v.y, n.y, 0,
            u.z, v.z, n.z, 0,
            0, 0, 0, 1);

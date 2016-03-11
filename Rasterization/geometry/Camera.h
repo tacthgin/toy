@@ -1,7 +1,7 @@
-#ifndef _CAMERA_H_
-#define _CAMERA_H_
+#ifndef __CAMERA_H__
+#define __CAMERA_H__
 
-#include "../math/Mat4.h"
+#include "Matrix4d.h"
 #include "Plane.h"
 
 class Camera
@@ -31,9 +31,9 @@ public:
 
     Camera();
     Camera(CameraType t,
-           const Vec4& p,
-           const Vec4& d,
-           const Vec4& uvnTarget,
+           const Vector4d& p,
+           const Vector4d& d,
+           const Vector4d& uvnTarget,
            float nearZ,
            float farZ, float fovAngle, float width, float height);
     void createEluerMatrix(CamerarRotate rotate);
@@ -44,13 +44,13 @@ public:
     int _state;
     CameraType _type;
 
-    Vec4 _pos;//相机位置
-    Vec4 _direction;//相机朝向
+    Vector4d _pos;//相机位置
+    Vector4d _direction;//相机朝向
 
-    Vec4 u;
-    Vec4 v;
-    Vec4 n; //uvn相机
-    Vec4 _target; //uvn模型位置
+    Vector4d u;
+    Vector4d v;
+    Vector4d n; //uvn相机
+    Vector4d _target; //uvn模型位置
 
     float _viewDish;//视距
     float _viewDishH;//水平视距
@@ -75,9 +75,9 @@ public:
 
     float _aspectRadio;//宽高比
 
-    Mat4 _worldToCam;//世界坐标到相机坐标
-    Mat4 _camToProj;//相机坐标到投影坐标
-    Mat4 _projToView;//投影坐标到屏幕坐标
+    Matrix4d _worldToCam;//世界坐标到相机坐标
+    Matrix4d _camToProj;//相机坐标到投影坐标
+    Matrix4d _projToView;//投影坐标到屏幕坐标
 };
 
-#endif //_CAMERA_H_
+#endif //__CAMERA_H__

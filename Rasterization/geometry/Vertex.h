@@ -1,16 +1,8 @@
-//
-//  Vertex.h
-//  Rasteriza
-//
-//  Created by 陈起慧 on 15/6/15.
-//
-//
-
 #ifndef _VERTEX_H_
 #define _VERTEX_H_
 
-#include "../math/Vec2.h"
-#include "../math/Vec4.h"
+#include "Vector2d.h"
+#include "Vector4d.h"
 
 class Vertex
 {

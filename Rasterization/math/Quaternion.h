@@ -1,11 +1,11 @@
-#ifndef _QUATERNION_H_
-#define _QUATERNION_H_
+#ifndef __QUATERNION_H__
+#define __QUATERNION_H__
 
-#include "Vec3.h"
-#include "Vec4.h"
+#include "Vector3d.h"
+#include "Vector4d.h"
 
-class Vec3;
-class Vec4;
+class Vector3d;
+class Vector4d;
 class Quaternion
 {
 public:
@@ -41,4 +41,4 @@ public:
 
 
 
-#endif
+#endif //__QUATERNION_H__

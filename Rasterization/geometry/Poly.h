@@ -2,8 +2,8 @@
 #define _POLY_H_
 
 #include <vector>
-#include "../math/Vec2.h"
-#include "../math/Vec4.h"
+#include "Vector2d.h"
+#include "Vector4d.h"
 #include "../render/Color.h"
 #include "Vertex.h"
 

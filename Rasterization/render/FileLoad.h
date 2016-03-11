@@ -2,7 +2,7 @@
 #define _FILELOAD_H_
 
 #include <cstdio>
-#include "../math/Vec4.h"
+#include "Vector4d.h"
 
 class Object4D;
 class FileLoad

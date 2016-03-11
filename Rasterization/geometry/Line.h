@@ -1,8 +1,8 @@
 #ifndef _LINE_H_
 #define _LINE_H_ 
 
-#include "../math/Vec2.h"
-#include "../math/Vec3.h"
+#include "Vector2d.h"
+#include "Vector3d.h"
 
 enum LineIntersect
 {
