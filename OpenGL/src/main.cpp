@@ -73,38 +73,40 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
-		glfwSetWindowShouldClose(window, GL_TRUE);
+		glfwSetWindowShouldClose(window, GL_TRUE);//关闭glfw
 	}
 }
 
 int main()
 {
+	//初始化glfw窗口
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //core_profile 核心模式
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //无法调整窗口大小
 
-	GLFWwindow *window = glfwCreateWindow(800, 600, "noob", nullptr, nullptr);
+	GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
 	if (window == nullptr)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 	    return -1;
 	}
-
 	glfwMakeContextCurrent(window);
 
-	glfwSetKeyCallback(window, key_callback);
+	glfwSetKeyCallback(window, key_callback); //设置按键回调
 
-	glewExperimental = GL_TRUE;
+	glewExperimental = GL_TRUE; //使glew更多使用现代化技术，防止在核心模式出现问题
 	if (glewInit() != GLEW_OK)
 	{
 		std::cout << "Failed to initialize GLEW" << std::endl;
 		return -1;
 	}
 
-	glViewport(0, 0, 800, 600);
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+	glViewport(0, 0, width, height); //设置opengl窗口大小
 
 	GLuint shaderProgram = linkProgram();
 
@@ -133,7 +135,7 @@ int main()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	while (!glfwWindowShouldClose(window))
 	{
-		glfwPollEvents();
+		glfwPollEvents();//处理触发事件(键盘,鼠标)
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
