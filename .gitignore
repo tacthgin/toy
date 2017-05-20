@@ -2,4 +2,16 @@
 .vs
 .sdf
 .opensdf
+*.opendb
+*.db
 Debug
+ExportedObj/
+.consulo/
+*.csproj
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd

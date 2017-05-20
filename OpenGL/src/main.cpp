@@ -73,18 +73,18 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
-		glfwSetWindowShouldClose(window, GL_TRUE);//¹Ø±Õglfw
+		glfwSetWindowShouldClose(window, GL_TRUE);//å…³é—­glfw
 	}
 }
 
 int main()
 {
-	//³õÊ¼»¯glfw´°¿Ú
+	//åˆå§‹åŒ–glfwçª—å£
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //core_profile ºËĞÄÄ£Ê½
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //ÎŞ·¨µ÷Õû´°¿Ú´óĞ¡
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //core_profile æ ¸å¿ƒæ¨¡å¼
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //æ— æ³•è°ƒæ•´çª—å£å¤§å°
 
 	GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
 	if (window == nullptr)
@@ -95,54 +95,64 @@ int main()
 	}
 	glfwMakeContextCurrent(window);
 
-	glfwSetKeyCallback(window, key_callback); //ÉèÖÃ°´¼ü»Øµ÷
+	glfwSetKeyCallback(window, key_callback); //è®¾ç½®æŒ‰é”®å›è°ƒ
 
-	glewExperimental = GL_TRUE; //Ê¹glew¸ü¶àÊ¹ÓÃÏÖ´ú»¯¼¼Êõ£¬·ÀÖ¹ÔÚºËĞÄÄ£Ê½³öÏÖÎÊÌâ
-	if (glewInit() != GLEW_OK)
+	glewExperimental = GL_TRUE; //ä½¿glewæ›´å¤šä½¿ç”¨ç°ä»£åŒ–æŠ€æœ¯ï¼Œé˜²æ­¢åœ¨æ ¸å¿ƒæ¨¡å¼å‡ºç°é—®é¢˜
+	GLenum err = glewInit();
+	if (err != GLEW_OK)
 	{
-		std::cout << "Failed to initialize GLEW" << std::endl;
+		std::cout << "Failed to initialize GLEW err:" << glewGetErrorString(err) << std::endl;
 		return -1;
 	}
 
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
-	glViewport(0, 0, width, height); //ÉèÖÃopengl´°¿Ú´óĞ¡
+	glViewport(0, 0, width, height); //è®¾ç½®openglçª—å£å¤§å°
 
 	GLuint shaderProgram = linkProgram();
 
 	GLfloat vertices[] = {
-		-0.5f, -0.5f, 0.0f, // Left  
-		0.5f, -0.5f, 0.0f, // Right 
-		0.0f,  0.5f, 0.0f  // Top   
+		-0.5f, 0.5f, 0.0f,
+		-0.5f, -0.5f, 0.0f,  
+		0.5f, -0.5f, 0.0f,
+		0.5f,  0.5f, 0.0f 
 	};
 
-	GLuint VBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
+	GLuint indics[] = {
+		0, 1, 2,
+		0, 2, 3
+	};
 
-	glBindVertexArray(VAO);
+	GLuint VBO, VAO, IBO;
+	glGenVertexArrays(1, &VAO); //åˆ›å»ºvao
+	glGenBuffers(1, &VBO); //åˆ›å»ºvbo
+	glGenBuffers(1, &IBO); //åˆ›å»ºibo
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBindVertexArray(VAO); //ç»‘å®švao
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);//ç»‘å®šç¼“å†²å¯¹è±¡
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); //å¤åˆ¶é¡¶ç‚¹æ•°æ®åˆ°ç¼“å†²å¯¹è±¡
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO); //ç»‘å®šç´¢å¼•ç¼“å†²
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indics), indics, GL_STATIC_DRAW); 
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0); //è®¾ç½®é¡¶ç‚¹å±æ€§
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glBindVertexArray(0);
+	glBindVertexArray(0); //è§£ç»‘vao
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	while (!glfwWindowShouldClose(window))
 	{
-		glfwPollEvents();//´¦Àí´¥·¢ÊÂ¼ş(¼üÅÌ,Êó±ê)
+		glfwPollEvents();//å¤„ç†è§¦å‘äº‹ä»¶(é”®ç›˜,é¼ æ ‡)
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
@@ -151,6 +161,7 @@ int main()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &IBO);
 	
 	glfwTerminate();
 	return 0;
