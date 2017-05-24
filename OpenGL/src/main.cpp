@@ -110,6 +110,12 @@ int main()
 	glViewport(0, 0, width, height); //设置opengl窗口大小
 
 	GLuint shaderProgram = linkProgram();
+	/*
+	GLfloat vertices[] = {
+		0.0f, 0.5f, 0.0f,
+		-0.5f, -0.5f, 0.0f,
+		0.5f, -0.5f, 0.0f,
+	};*/
 
 	GLfloat vertices[] = {
 		-0.5f, 0.5f, 0.0f,
@@ -142,7 +148,7 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0); //解绑vao
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();//处理触发事件(键盘,鼠标)
@@ -152,13 +158,13 @@ int main()
 		
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
 		
 	}
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &IBO);
