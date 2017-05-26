@@ -5,20 +5,24 @@
 
 using namespace std;
 
-const GLchar* vertexShaderSource = 
+const GLchar* vertexShaderSource =
 	"#version 330 core\n"
 	"layout (location = 0) in vec3 position;\n"
+	"layout (location = 1) in vec3 color;\n"
+	"out vec3 outColor;\n"
 	"void main()\n"
 	"{\n"
-		"gl_Position = vec4(position.x, position.y, position.z, 1.0);\n"
+		"gl_Position = vec4(position, 1.0);\n"
+		"outColor = color;\n"
 	"}\0";
 
 const GLchar* fragmentShaderSource =
 	"#version 330 core\n"
+	"in vec3 outColor;\n"
 	"out vec4 color;\n"
 	"void main()\n"
 	"{\n"
-		"color = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+		"color = vec4(outColor, 1.0f);\n"
 	"}\n";
 
 GLuint loadShader(GLint shaderType, const char* sharderSource)
@@ -110,13 +114,13 @@ int main()
 	glViewport(0, 0, width, height); //设置opengl窗口大小
 
 	GLuint shaderProgram = linkProgram();
-	/*
+	
 	GLfloat vertices[] = {
-		0.0f, 0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-	};*/
-
+		0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+	};
+	/*
 	GLfloat vertices[] = {
 		-0.5f, 0.5f, 0.0f,
 		-0.5f, -0.5f, 0.0f,  
@@ -127,7 +131,7 @@ int main()
 	GLuint indics[] = {
 		0, 1, 2,
 		0, 2, 3
-	};
+	};*/
 
 	GLuint VBO, VAO, IBO;
 	glGenVertexArrays(1, &VAO); //创建vao
@@ -138,12 +142,15 @@ int main()
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);//绑定缓冲对象
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); //复制顶点数据到缓冲对象
-
+	/*
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO); //绑定索引缓冲
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indics), indics, GL_STATIC_DRAW); 
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indics), indics, GL_STATIC_DRAW); */
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0); //设置顶点属性
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0); //设置顶点属性
 	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat))); //设置顶点属性
+	glEnableVertexAttribArray(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0); //解绑vao
@@ -155,11 +162,17 @@ int main()
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		
+
 		glUseProgram(shaderProgram);
+		/*
+		GLfloat timeValue = glfwGetTime();
+		GLfloat greenValue = (sin(timeValue) / 2) + 0.5;
+		GLint colorLocation = glGetUniformLocation(shaderProgram, "outColor");
+		glUniform4f(colorLocation, 0.0f, greenValue, 0.0f, 1.0f);*/
+
 		glBindVertexArray(VAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
