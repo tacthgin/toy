@@ -2,76 +2,9 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW\glfw3.h>
+#include "Shader.h"
 
 using namespace std;
-
-const GLchar* vertexShaderSource =
-	"#version 330 core\n"
-	"layout (location = 0) in vec3 position;\n"
-	"layout (location = 1) in vec3 color;\n"
-	"out vec3 outColor;\n"
-	"void main()\n"
-	"{\n"
-		"gl_Position = vec4(position, 1.0);\n"
-		"outColor = color;\n"
-	"}\0";
-
-const GLchar* fragmentShaderSource =
-	"#version 330 core\n"
-	"in vec3 outColor;\n"
-	"out vec4 color;\n"
-	"void main()\n"
-	"{\n"
-		"color = vec4(outColor, 1.0f);\n"
-	"}\n";
-
-GLuint loadShader(GLint shaderType, const char* sharderSource)
-{
-	GLuint shader = glCreateShader(shaderType);
-	glShaderSource(shader, 1, &sharderSource, NULL);
-	glCompileShader(shader);
-
-	GLint success;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		GLchar infoLog[512] = "";
-		glGetShaderInfoLog(shader, 512, NULL, infoLog);
-		cout << "ERROR SHADER:" << infoLog << endl;
-	}
-	else
-	{
-		return shader;
-	}
-
-	return 0;
-}
-
-GLuint linkProgram()
-{
-	GLuint shaderProgram = glCreateProgram();
-	GLuint vertexShader = loadShader(GL_VERTEX_SHADER, vertexShaderSource);
-	GLuint fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
-	if (vertexShader != 0 && fragmentShader != 0)
-	{
-		glAttachShader(shaderProgram, vertexShader);
-		glAttachShader(shaderProgram, fragmentShader);
-		glLinkProgram(shaderProgram);
-
-		GLint success;
-		glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-		if (!success)
-		{
-			GLchar infoLog[512];
-			glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-			cout << "ERROR PROGRAM:" << infoLog << endl;
-		}
-	}
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	return shaderProgram;
-}
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
@@ -113,7 +46,7 @@ int main()
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height); //设置opengl窗口大小
 
-	GLuint shaderProgram = linkProgram();
+	Shader shader("shaders/shader.vs", "shaders/shader.frag");
 	
 	GLfloat vertices[] = {
 		0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
@@ -163,7 +96,7 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderProgram);
+		shader.use();
 		/*
 		GLfloat timeValue = glfwGetTime();
 		GLfloat greenValue = (sin(timeValue) / 2) + 0.5;
