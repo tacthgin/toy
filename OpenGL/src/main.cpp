@@ -23,7 +23,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //core_profile 核心模式
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //无法调整窗口大小
 
-	GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
+	GLFWwindow *window = glfwCreateWindow(480, 320, "LearnOpenGL", nullptr, nullptr);
 	if (window == nullptr)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -100,7 +100,7 @@ int main()
 		/*
 		GLfloat timeValue = glfwGetTime();
 		GLfloat greenValue = (sin(timeValue) / 2) + 0.5;
-		GLint colorLocation = glGetUniformLocation(shaderProgram, "outColor");
+		GLint colorLocation = glGetUniformLocation(shader.getProgram(), "outColor");
 		glUniform4f(colorLocation, 0.0f, greenValue, 0.0f, 1.0f);*/
 
 		glBindVertexArray(VAO);

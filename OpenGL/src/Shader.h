@@ -7,12 +7,14 @@ class Shader
 {
 public:
 	Shader(const GLchar* vertexPath, const GLchar* fragmentPath);
-	
+	//使用着色器程序对象
 	void use();
+	GLint getProgram();
 private:
 	GLuint loadShader(GLint shaderType, const GLchar* sharderSource);
 	void linkProgram(const GLchar* vertexShaderSource, const GLchar* fragmentShaderSource);
 private:
+	//程序id
 	GLint _program;
 };
 
