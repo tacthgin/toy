@@ -2,6 +2,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW\glfw3.h>
+#include <SOIL/SOIL.h>
 #include "Shader.h"
 
 using namespace std;
@@ -45,6 +46,11 @@ int main()
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height); //设置opengl窗口大小
+
+	unsigned char* image = SOIL_load_image("images/timg.jpg", &width, &height, 0, SOIL_LOAD_RGB);
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
 
 	Shader shader("shaders/shader.vs", "shaders/shader.frag");
 	
