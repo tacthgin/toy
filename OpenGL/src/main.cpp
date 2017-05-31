@@ -47,7 +47,7 @@ int main()
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height); //设置opengl窗口大小
 
-	Shader shader("shaders/shader.vs", "shaders/shader.frag");
+	Shader shader("../shaders/shader.vs", "../shaders/shader.frag");
 
 	GLuint texture1;
 	glGenTextures(1, &texture1);
@@ -59,7 +59,7 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	unsigned char* image = SOIL_load_image("images/timg.jpg", &width, &height, 0, SOIL_LOAD_RGBA);
+	unsigned char* image = SOIL_load_image("../images/timg.jpg", &width, &height, 0, SOIL_LOAD_RGBA);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	SOIL_free_image_data(image);
@@ -75,7 +75,7 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	image = SOIL_load_image("images/cat.jpg", &width, &height, 0, SOIL_LOAD_RGBA);
+	image = SOIL_load_image("../images/cat.jpg", &width, &height, 0, SOIL_LOAD_RGBA);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	SOIL_free_image_data(image);
