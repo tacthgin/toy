@@ -4,6 +4,9 @@
     <Filter Include="src">
       <UniqueIdentifier>{a5471028-228e-4fe3-970f-9e81143ea6c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{413b080c-2610-4f8d-b61f-a75df5d3ad85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp">
@@ -17,5 +20,13 @@
     <ClInclude Include="..\src\Shader.h">
       <Filter>src</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shaders\shader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\shaders\shader.vs">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

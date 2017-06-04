@@ -25,6 +25,10 @@
   <ItemGroup>
     <ClInclude Include="..\src\Shader.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shaders\shader.frag" />
+    <None Include="..\shaders\shader.vs" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C7168492-E6A7-45E2-BD02-AA098D3C25E8}</ProjectGuid>
     <RootNamespace>OpenGL</RootNamespace>
