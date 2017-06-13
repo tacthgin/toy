@@ -9,6 +9,7 @@
 #include "Shader.h"
 
 using namespace std;
+using namespace glm;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
@@ -27,8 +28,8 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //core_profile 核心模式
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //无法调整窗口大小
 
-	int screenWidth = 800;
-	int screenHeight = 600;
+	int screenWidth = 480;
+	int screenHeight = 320;
 	GLFWwindow *window = glfwCreateWindow(screenWidth, screenHeight, "LearnOpenGL", nullptr, nullptr);
 	if (window == nullptr)
 	{
@@ -171,17 +172,17 @@ int main()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_DEPTH_TEST);
 
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
+	vec3 cubePositions[] = {
+		vec3(0.0f,  0.0f,  0.0f),
+		vec3(2.0f,  5.0f, -15.0f),
+		vec3(-1.5f, -2.2f, -2.5f),
+		vec3(-3.8f, -2.0f, -12.3f),
+		vec3(2.4f, -0.4f, -3.5f),
+		vec3(-1.7f,  3.0f, -7.5f),
+		vec3(1.3f, -2.0f, -2.5f),
+		vec3(1.5f,  2.0f, -2.5f),
+		vec3(1.5f,  0.2f, -1.5f),
+		vec3(-1.3f,  1.0f, -1.5f)
 	};
 
 	while (!glfwWindowShouldClose(window))
@@ -201,43 +202,48 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		glUniform1i(glGetUniformLocation(shader.getProgram(), "ourTexture2"), 1);
 		/*
-		glm::mat4 trans;
+		mat4 trans;
 		GLfloat scale = abs(sinf((GLfloat)glfwGetTime()));
-		trans = glm::scale(trans, glm::vec3(scale, scale, 0.0f));
-		trans = glm::rotate(trans, (GLfloat)glfwGetTime() * 50.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+		trans = scale(trans, vec3(scale, scale, 0.0f));
+		trans = rotate(trans, (GLfloat)glfwGetTime() * 50.0f, vec3(0.0f, 0.0f, 1.0f));
 
 		GLuint transformLoc = glGetUniformLocation(shader.getProgram(), "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));*/
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, value_ptr(trans));*/
 
 		/*
-		glm::mat4 model;
-		model = glm::rotate(model, (GLfloat)glfwGetTime() * 50.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+		mat4 model;
+		model = rotate(model, (GLfloat)glfwGetTime() * 50.0f, vec3(1.0f, 0.0f, 0.0f));
 		
 		GLuint modelLoc = glGetUniformLocation(shader.getProgram(), "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 		*/
 
 		GLuint modelLoc = glGetUniformLocation(shader.getProgram(), "model");
 
-		glm::mat4 view;
+		/*
 		// 注意，我们将矩阵向我们要进行移动场景的反向移动。
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+		view = translate(view, vec3(0.0f, 0.0f, -3.0f));
+		*/
+		GLfloat radius = 10.0f;
+		GLfloat camX = sin(glfwGetTime()) * radius;
+		GLfloat camZ = cos(glfwGetTime()) * radius;
+		mat4 view = lookAt(vec3(camX, 0.0, camZ), vec3(0.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0));
 		GLuint viewLoc = glGetUniformLocation(shader.getProgram(), "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 
-		glm::mat4 projection;
-		projection = glm::perspective(45.0f, (float)screenWidth / screenHeight, 0.1f, 100.0f);
+		mat4 projection;
+		projection = perspective(45.0f, (float)screenWidth / screenHeight, 0.1f, 100.0f);
 		GLuint projectionLoc = glGetUniformLocation(shader.getProgram(), "projection");
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
 		
 		glBindVertexArray(VAO);
 		for (GLuint i = 0; i < 10; i++)
 		{
-			glm::mat4 model;
-			model = glm::translate(model, cubePositions[i]);
+			mat4 model;
+			model = translate(model, cubePositions[i]);
 			GLfloat angle = 20.0f * (i + 1);
-			model = glm::rotate(model, angle * (float)glfwGetTime(), glm::vec3(1.0f, 0.3f, 0.5f));
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			model = rotate(model, angle * (float)glfwGetTime(), vec3(1.0f, 0.3f, 0.5f));
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
