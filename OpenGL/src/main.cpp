@@ -11,12 +11,63 @@
 using namespace std;
 using namespace glm;
 
+GLfloat aspect = 45.0f;
+GLboolean firstMouse = true;
+GLfloat lastX = 0.0f;
+GLfloat lastY = 0.0f;
+GLfloat pitchAngle = 0.0f;
+GLfloat yawAngle = 0.0f;
+vec3 cameraFront;
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, GL_TRUE);//关闭glfw
 	}
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	GLfloat xoffset = xpos - lastX;
+	GLfloat yoffset = lastY - ypos;
+	lastX = xpos;
+	lastY = ypos;
+
+	GLfloat sensitivity = 0.05;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	yawAngle += xoffset;
+	pitchAngle += yoffset;
+
+	if (pitchAngle > 89.0f)
+		pitchAngle = 89.0f;
+	if (pitchAngle < -89.0f)
+		pitchAngle = -89.0f;
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(yawAngle)) * cos(glm::radians(pitchAngle));
+	front.y = sin(glm::radians(pitchAngle));
+	front.z = sin(glm::radians(yawAngle)) * cos(glm::radians(pitchAngle));
+	cameraFront = glm::normalize(front);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	if (aspect >= 1.0f && aspect <= 45.0f)
+		aspect -= yoffset;
+	if (aspect <= 1.0f)
+		aspect = 1.0f;
+	if (aspect >= 45.0f)
+		aspect = 45.0f;
 }
 
 int main()
@@ -40,6 +91,8 @@ int main()
 	glfwMakeContextCurrent(window);
 
 	glfwSetKeyCallback(window, key_callback); //设置按键回调
+	glfwSetCursorPosCallback(window, mouse_callback); //设置鼠标回调
+	glfwSetScrollCallback(window, scroll_callback); //设置鼠标滚轮回调
 
 	glewExperimental = GL_TRUE; //使glew更多使用现代化技术，防止在核心模式出现问题
 	GLenum err = glewInit();
