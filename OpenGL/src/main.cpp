@@ -11,13 +11,21 @@
 using namespace std;
 using namespace glm;
 
+int screenWidth = 800;
+int screenHeight = 600;
+
+bool keys[1024];
+bool mouseDown = false;
+
 GLfloat aspect = 45.0f;
 GLboolean firstMouse = true;
-GLfloat lastX = 0.0f;
-GLfloat lastY = 0.0f;
+GLfloat lastX = screenWidth / 2;
+GLfloat lastY = screenHeight / 2;
 GLfloat pitchAngle = 0.0f;
-GLfloat yawAngle = 0.0f;
-vec3 cameraFront;
+GLfloat yawAngle = -90.0f;
+vec3 cameraPos = vec3(0.0f, 0.0f, 3.0f);
+vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);
+vec3 cameraUp = vec3(0.0f, 1.0f, 0.0f);
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
@@ -25,10 +33,34 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	{
 		glfwSetWindowShouldClose(window, GL_TRUE);//关闭glfw
 	}
+	else if(action == GLFW_PRESS)
+	{
+		keys[key] = true;
+	}
+	else if (action == GLFW_RELEASE)
+	{
+		keys[key] = false;
+	}
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_RIGHT)
+	{
+		if (action == GLFW_PRESS)
+		{
+			firstMouse = true;
+			mouseDown = true;
+		}
+		else if (action == GLFW_RELEASE)
+			mouseDown = false;
+	}
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
+	if (!mouseDown)return;
+	
 	if (firstMouse)
 	{
 		lastX = xpos;
@@ -41,23 +73,23 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
-	GLfloat sensitivity = 0.05;
+	GLfloat sensitivity = 0.05f;
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;
 
 	yawAngle += xoffset;
 	pitchAngle += yoffset;
-
+	
 	if (pitchAngle > 89.0f)
 		pitchAngle = 89.0f;
 	if (pitchAngle < -89.0f)
 		pitchAngle = -89.0f;
 
-	glm::vec3 front;
-	front.x = cos(glm::radians(yawAngle)) * cos(glm::radians(pitchAngle));
-	front.y = sin(glm::radians(pitchAngle));
-	front.z = sin(glm::radians(yawAngle)) * cos(glm::radians(pitchAngle));
-	cameraFront = glm::normalize(front);
+	vec3 front;
+	front.x = cos(radians(yawAngle)) * cos(radians(pitchAngle));
+	front.y = sin(radians(pitchAngle));
+	front.z = sin(radians(yawAngle)) * cos(radians(pitchAngle));
+	cameraFront = normalize(front);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -70,6 +102,19 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 		aspect = 45.0f;
 }
 
+void do_movement()
+{
+	GLfloat cameraSpeed = 0.01f;
+	if(keys[GLFW_KEY_W])
+		cameraPos += cameraSpeed * cameraFront;
+	if(keys[GLFW_KEY_S])
+		cameraPos -= cameraSpeed * cameraFront;
+	if(keys[GLFW_KEY_A])
+		cameraPos -= cameraSpeed * normalize(cross(cameraFront, cameraUp));
+	if (keys[GLFW_KEY_D])
+		cameraPos += cameraSpeed * normalize(cross(cameraFront, cameraUp));
+}
+
 int main()
 {
 	//初始化glfw窗口
@@ -79,8 +124,6 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //core_profile 核心模式
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //无法调整窗口大小
 
-	int screenWidth = 480;
-	int screenHeight = 320;
 	GLFWwindow *window = glfwCreateWindow(screenWidth, screenHeight, "LearnOpenGL", nullptr, nullptr);
 	if (window == nullptr)
 	{
@@ -91,6 +134,7 @@ int main()
 	glfwMakeContextCurrent(window);
 
 	glfwSetKeyCallback(window, key_callback); //设置按键回调
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetCursorPosCallback(window, mouse_callback); //设置鼠标回调
 	glfwSetScrollCallback(window, scroll_callback); //设置鼠标滚轮回调
 
@@ -254,38 +298,17 @@ int main()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		glUniform1i(glGetUniformLocation(shader.getProgram(), "ourTexture2"), 1);
-		/*
-		mat4 trans;
-		GLfloat scale = abs(sinf((GLfloat)glfwGetTime()));
-		trans = scale(trans, vec3(scale, scale, 0.0f));
-		trans = rotate(trans, (GLfloat)glfwGetTime() * 50.0f, vec3(0.0f, 0.0f, 1.0f));
 
-		GLuint transformLoc = glGetUniformLocation(shader.getProgram(), "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, value_ptr(trans));*/
-
-		/*
-		mat4 model;
-		model = rotate(model, (GLfloat)glfwGetTime() * 50.0f, vec3(1.0f, 0.0f, 0.0f));
-		
-		GLuint modelLoc = glGetUniformLocation(shader.getProgram(), "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
-		*/
+		do_movement();
 
 		GLuint modelLoc = glGetUniformLocation(shader.getProgram(), "model");
 
-		/*
-		// 注意，我们将矩阵向我们要进行移动场景的反向移动。
-		view = translate(view, vec3(0.0f, 0.0f, -3.0f));
-		*/
-		GLfloat radius = 10.0f;
-		GLfloat camX = sin(glfwGetTime()) * radius;
-		GLfloat camZ = cos(glfwGetTime()) * radius;
-		mat4 view = lookAt(vec3(camX, 0.0, camZ), vec3(0.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0));
+		mat4 view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		GLuint viewLoc = glGetUniformLocation(shader.getProgram(), "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 
 		mat4 projection;
-		projection = perspective(45.0f, (float)screenWidth / screenHeight, 0.1f, 100.0f);
+		projection = perspective(aspect, (float)screenWidth / screenHeight, 0.1f, 100.0f);
 		GLuint projectionLoc = glGetUniformLocation(shader.getProgram(), "projection");
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
 		
@@ -300,8 +323,7 @@ int main()
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 		glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
