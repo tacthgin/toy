@@ -3,10 +3,8 @@
 #include <GL/glew.h>
 #include <GLFW\glfw3.h>
 #include <SOIL/SOIL.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
+#include "Camera.h"
 
 using namespace std;
 using namespace glm;
@@ -15,17 +13,8 @@ int screenWidth = 800;
 int screenHeight = 600;
 
 bool keys[1024];
-bool mouseDown = false;
 
-GLfloat aspect = 45.0f;
-GLboolean firstMouse = true;
-GLfloat lastX = screenWidth / 2;
-GLfloat lastY = screenHeight / 2;
-GLfloat pitchAngle = 0.0f;
-GLfloat yawAngle = -90.0f;
-vec3 cameraPos = vec3(0.0f, 0.0f, 3.0f);
-vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);
-vec3 cameraUp = vec3(0.0f, 1.0f, 0.0f);
+Camera camera(vec3(0.0f, 0.0f, 3.0f));
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
@@ -49,70 +38,46 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	{
 		if (action == GLFW_PRESS)
 		{
-			firstMouse = true;
-			mouseDown = true;
+			camera.processMouseButton(Camera::MouseAction::PRESS);
 		}
 		else if (action == GLFW_RELEASE)
-			mouseDown = false;
+		{
+			camera.processMouseButton(Camera::MouseAction::RELEASE);
+		}
 	}
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (!mouseDown)return;
-	
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
-
-	GLfloat xoffset = xpos - lastX;
-	GLfloat yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
-
-	GLfloat sensitivity = 0.05f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yawAngle += xoffset;
-	pitchAngle += yoffset;
-	
-	if (pitchAngle > 89.0f)
-		pitchAngle = 89.0f;
-	if (pitchAngle < -89.0f)
-		pitchAngle = -89.0f;
-
-	vec3 front;
-	front.x = cos(radians(yawAngle)) * cos(radians(pitchAngle));
-	front.y = sin(radians(pitchAngle));
-	front.z = sin(radians(yawAngle)) * cos(radians(pitchAngle));
-	cameraFront = normalize(front);
+	camera.processMouseCursor(xpos, ypos);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	if (aspect >= 1.0f && aspect <= 45.0f)
-		aspect -= yoffset;
-	if (aspect <= 1.0f)
-		aspect = 1.0f;
-	if (aspect >= 45.0f)
-		aspect = 45.0f;
+	camera.processMouseScroll(yoffset);
 }
 
-void do_movement()
+void do_movement(GLfloat deltaTime)
 {
-	GLfloat cameraSpeed = 0.01f;
-	if(keys[GLFW_KEY_W])
-		cameraPos += cameraSpeed * cameraFront;
-	if(keys[GLFW_KEY_S])
-		cameraPos -= cameraSpeed * cameraFront;
-	if(keys[GLFW_KEY_A])
-		cameraPos -= cameraSpeed * normalize(cross(cameraFront, cameraUp));
+	if (keys[GLFW_KEY_W])
+	{
+		camera.processKeyboard(Camera::Direction::FOWARD, deltaTime);
+	}
+
+	if (keys[GLFW_KEY_S])
+	{
+		camera.processKeyboard(Camera::Direction::BACKARD, deltaTime);
+	}
+
+	if (keys[GLFW_KEY_A])
+	{
+		camera.processKeyboard(Camera::Direction::LEFT, deltaTime);
+	}
+
 	if (keys[GLFW_KEY_D])
-		cameraPos += cameraSpeed * normalize(cross(cameraFront, cameraUp));
+	{
+		camera.processKeyboard(Camera::Direction::RIGHT, deltaTime);
+	}
 }
 
 int main()
@@ -134,7 +99,7 @@ int main()
 	glfwMakeContextCurrent(window);
 
 	glfwSetKeyCallback(window, key_callback); //设置按键回调
-	glfwSetMouseButtonCallback(window, mouse_button_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);//设置鼠标按键回调
 	glfwSetCursorPosCallback(window, mouse_callback); //设置鼠标回调
 	glfwSetScrollCallback(window, scroll_callback); //设置鼠标滚轮回调
 
@@ -151,7 +116,7 @@ int main()
 	glViewport(0, 0, width, height); //设置opengl窗口大小
 
 	Shader shader("../shaders/shader.vs", "../shaders/shader.frag");
-
+	
 	GLuint texture1;
 	glGenTextures(1, &texture1);
 	glBindTexture(GL_TEXTURE_2D, texture1);
@@ -241,6 +206,19 @@ int main()
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
+	vec3 cubePositions[] = {
+		vec3(0.0f,  0.0f,  0.0f),
+		vec3(2.0f,  5.0f, -15.0f),
+		vec3(-1.5f, -2.2f, -2.5f),
+		vec3(-3.8f, -2.0f, -12.3f),
+		vec3(2.4f, -0.4f, -3.5f),
+		vec3(-1.7f,  3.0f, -7.5f),
+		vec3(1.3f, -2.0f, -2.5f),
+		vec3(1.5f,  2.0f, -2.5f),
+		vec3(1.5f,  0.2f, -1.5f),
+		vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 	GLuint VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO); //创建vao
 	glGenBuffers(1, &VBO); //创建vbo
@@ -269,22 +247,16 @@ int main()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_DEPTH_TEST);
 
-	vec3 cubePositions[] = {
-		vec3(0.0f,  0.0f,  0.0f),
-		vec3(2.0f,  5.0f, -15.0f),
-		vec3(-1.5f, -2.2f, -2.5f),
-		vec3(-3.8f, -2.0f, -12.3f),
-		vec3(2.4f, -0.4f, -3.5f),
-		vec3(-1.7f,  3.0f, -7.5f),
-		vec3(1.3f, -2.0f, -2.5f),
-		vec3(1.5f,  2.0f, -2.5f),
-		vec3(1.5f,  0.2f, -1.5f),
-		vec3(-1.3f,  1.0f, -1.5f)
-	};
-
+	GLfloat lastFrame = glfwGetTime();
 	while (!glfwWindowShouldClose(window))
 	{
+		GLfloat currentFrame = glfwGetTime();
+		GLfloat deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
 		glfwPollEvents();//处理触发事件(键盘,鼠标)
+
+		do_movement(deltaTime);
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -299,16 +271,14 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		glUniform1i(glGetUniformLocation(shader.getProgram(), "ourTexture2"), 1);
 
-		do_movement();
-
 		GLuint modelLoc = glGetUniformLocation(shader.getProgram(), "model");
 
-		mat4 view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		mat4 view = camera.getViewMatrix();
 		GLuint viewLoc = glGetUniformLocation(shader.getProgram(), "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 
 		mat4 projection;
-		projection = perspective(aspect, (float)screenWidth / screenHeight, 0.1f, 100.0f);
+		projection = perspective(camera.getAscept(), (float)screenWidth / screenHeight, 0.1f, 100.0f);
 		GLuint projectionLoc = glGetUniformLocation(shader.getProgram(), "projection");
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
 		
