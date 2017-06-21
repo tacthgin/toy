@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp" />
-    <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\lightMain.cpp" />
     <ClCompile Include="..\src\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -28,6 +28,10 @@
     <ClInclude Include="..\src\Shader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\shaders\lamp.frag" />
+    <None Include="..\shaders\lamp.vs" />
+    <None Include="..\shaders\lighting.frag" />
+    <None Include="..\shaders\lighting.vs" />
     <None Include="..\shaders\shader.frag" />
     <None Include="..\shaders\shader.vs" />
   </ItemGroup>
