@@ -22,6 +22,7 @@ public:
 		PRESS,
 		RELEASE
 	};
+
 	Camera(const glm::vec3& pos);
 	glm::mat4 getViewMatrix();
 	GLfloat getAscept();

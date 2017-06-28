@@ -20,7 +20,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
-		glfwSetWindowShouldClose(window, GL_TRUE);//关闭glfw
+		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 	else if (action == GLFW_PRESS)
 	{
@@ -82,12 +82,11 @@ void do_movement(GLfloat deltaTime)
 
 int main()
 {
-	//初始化glfw窗口
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //core_profile 核心模式
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //无法调整窗口大小
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 	GLFWwindow *window = glfwCreateWindow(screenWidth, screenHeight, "LearnOpenGL", nullptr, nullptr);
 	if (window == nullptr)
@@ -98,12 +97,12 @@ int main()
 	}
 	glfwMakeContextCurrent(window);
 
-	glfwSetKeyCallback(window, key_callback); //设置按键回调
-	glfwSetMouseButtonCallback(window, mouse_button_callback);//设置鼠标按键回调
-	glfwSetCursorPosCallback(window, mouse_callback); //设置鼠标回调
-	glfwSetScrollCallback(window, scroll_callback); //设置鼠标滚轮回调
+	glfwSetKeyCallback(window, key_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 
-	glewExperimental = GL_TRUE; //使glew更多使用现代化技术，防止在核心模式出现问题
+	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
 	if (err != GLEW_OK)
 	{
@@ -113,7 +112,7 @@ int main()
 
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
-	glViewport(0, 0, width, height); //设置opengl窗口大小
+	glViewport(0, 0, width, height);
 
 	Shader lightingShader("../shaders/lighting.vs", "../shaders/lighting.frag");
 	Shader lampShader("../shaders/lamp.vs", "../shaders/lamp.frag");
@@ -174,7 +173,7 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)3);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -199,11 +198,11 @@ int main()
 		GLfloat deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		glfwPollEvents();//处理触发事件(键盘,鼠标)
+		glfwPollEvents();
 
 		do_movement(deltaTime);
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		lightingShader.use();
@@ -211,17 +210,18 @@ int main()
 		GLint lightColorLoc = glGetUniformLocation(lightingShader.getProgram(), "lightColor");
 		GLint lightPosLoc = glGetUniformLocation(lightingShader.getProgram(), "lightPos");
 		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
-		glUniform3f(lightColorLoc, 1.0f, 0.5f, 1.0f);
+		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
 		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
 
 		GLuint modelLoc = glGetUniformLocation(lightingShader.getProgram(), "model");
-		mat4 view = camera.getViewMatrix();
 		GLuint viewLoc = glGetUniformLocation(lightingShader.getProgram(), "view");
+		GLuint projectionLoc = glGetUniformLocation(lightingShader.getProgram(), "projection");
+
+		mat4 view = camera.getViewMatrix();
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 
 		mat4 projection;
 		projection = perspective(camera.getAscept(), (float)screenWidth / screenHeight, 0.1f, 100.0f);
-		GLuint projectionLoc = glGetUniformLocation(lightingShader.getProgram(), "projection");
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
 		
 		glBindVertexArray(containerVAO);
@@ -232,11 +232,9 @@ int main()
 
 		lampShader.use();
 		modelLoc = glGetUniformLocation(lampShader.getProgram(), "model");
-
 		viewLoc = glGetUniformLocation(lampShader.getProgram(), "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
 		projectionLoc = glGetUniformLocation(lampShader.getProgram(), "projection");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 		model = mat4();
