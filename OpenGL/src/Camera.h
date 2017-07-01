@@ -25,6 +25,7 @@ public:
 
 	Camera(const glm::vec3& pos);
 	glm::mat4 getViewMatrix();
+	glm::vec3 getPos();
 	GLfloat getAscept();
 	GLfloat setCameraSensitivity(GLfloat sensitivity);
 	void processKeyboard(Direction direction, GLfloat deltaTime);

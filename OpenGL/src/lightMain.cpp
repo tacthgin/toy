@@ -209,9 +209,12 @@ int main()
 		GLint objectColorLoc = glGetUniformLocation(lightingShader.getProgram(), "objectColor");
 		GLint lightColorLoc = glGetUniformLocation(lightingShader.getProgram(), "lightColor");
 		GLint lightPosLoc = glGetUniformLocation(lightingShader.getProgram(), "lightPos");
+		GLint viewPosLoc = glGetUniformLocation(lightingShader.getProgram(), "viewPos");
+		vec3 cameraPos = camera.getPos();
 		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
 		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
 		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+		glUniform3f(viewPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
 
 		GLuint modelLoc = glGetUniformLocation(lightingShader.getProgram(), "model");
 		GLuint viewLoc = glGetUniformLocation(lightingShader.getProgram(), "view");

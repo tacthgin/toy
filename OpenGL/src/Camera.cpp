@@ -23,6 +23,11 @@ glm::mat4 Camera::getViewMatrix()
 	return lookAt(_pos, _pos + _front, _up);
 }
 
+glm::vec3 Camera::getPos()
+{
+	return _pos;
+}
+
 GLfloat Camera::getAscept()
 {
 	return _ascept;
