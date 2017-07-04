@@ -28,6 +28,11 @@ glm::vec3 Camera::getPos()
 	return _pos;
 }
 
+glm::vec3 Camera::getFront()
+{
+	return _front;
+}
+
 GLfloat Camera::getAscept()
 {
 	return _ascept;
