@@ -191,6 +191,19 @@ int main()
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 	};
 
+	vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 	GLuint VBO, containerVAO;
 	glGenVertexArrays(1, &containerVAO);
 	glGenBuffers(1, &VBO); 
@@ -250,22 +263,26 @@ int main()
 		glUniform1i(matDiffuseLoc, 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
-
+		
 		glUniform1i(matSpecularLoc, 1);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specularMap);
 
 		glUniform1f(matShineLoc, 64.0f);
+		/* ·½Ïò¹â
+		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "directionLight.direction"), -0.2f, -1.0f, -0.3f);
+		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "directionLight.ambient"), 0.2f, 0.2f, 0.2f);
+		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "directionLight.diffuse"), 0.5f, 0.5f, 0.5f);
+		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "directionLight.specular"), 1.0f, 1.0f, 1.0f);
+		*/
 
-		GLint lightPositionLoc = glGetUniformLocation(lightingShader.getProgram(), "light.position");
-		GLint lightAmbientLoc = glGetUniformLocation(lightingShader.getProgram(), "light.ambient");
-		GLint lightDiffuseLoc = glGetUniformLocation(lightingShader.getProgram(), "light.diffuse");
-		GLint lightSpecularLoc = glGetUniformLocation(lightingShader.getProgram(), "light.specular");
-
-		glUniform3f(lightPositionLoc, lightPos.x, lightPos.y, lightPos.z);
-		glUniform3f(lightAmbientLoc, 0.2f, 0.2f, 0.2f);
-		glUniform3f(lightDiffuseLoc, 0.5f, 0.5f, 0.5f);
-		glUniform3f(lightSpecularLoc, 1.0f, 1.0f, 1.0f);
+		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.position"), lightPos.x, lightPos.y, lightPos.z);
+		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.ambient"), 0.2f, 0.2f, 0.2f);
+		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.diffuse"), 0.5f, 0.5f, 0.5f);
+		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.specular"), 1.0f, 1.0f, 1.0f);
+		glUniform1f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.linear"), 0.09f);
+		glUniform1f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.quadratic"), 0.032f);
 
 		GLuint modelLoc = glGetUniformLocation(lightingShader.getProgram(), "model");
 		GLuint viewLoc = glGetUniformLocation(lightingShader.getProgram(), "view");
@@ -279,9 +296,16 @@ int main()
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
 		
 		glBindVertexArray(containerVAO);
-		glm::mat4 model;
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		mat4 model;
+		for (GLuint i = 0; i < 10; i++)
+		{
+			model = mat4();
+			model = translate(model, cubePositions[i]);
+			GLfloat angle = 20.0f * i;
+			model = rotate(model, angle, vec3(1.0f, 0.3f, 0.5f));
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 		glBindVertexArray(0);
 
 		lampShader.use();
