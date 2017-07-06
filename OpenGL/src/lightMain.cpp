@@ -286,18 +286,18 @@ int main()
 			glUniform1f(glGetUniformLocation(lightingShader.getProgram(), (front + ".linear").c_str()), 0.09f);
 			glUniform1f(glGetUniformLocation(lightingShader.getProgram(), (front + ".quadratic").c_str()), 0.032f);
 		}
-		/*
+		
 		vec3 cameraFront = camera.getFront();
 		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.position"), cameraPos.x, cameraPos.y, cameraPos.z);
 		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.direction"), cameraFront.x, cameraFront.y, cameraFront.z);
 		glUniform1f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.cutOff"), cos(radians(12.5f)));
-		glUniform1f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.outerCutOff"), cos(radians(17.5f)));
-		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.ambient"), 0.2f, 0.2f, 0.2f);
-		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.diffuse"), 0.5f, 0.5f, 0.5f);
+		glUniform1f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.outerCutOff"), cos(radians(15.0f)));
+		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.ambient"), 0.0f, 0.0f, 0.0f);
+		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.diffuse"), 1.0f, 1.0f, 1.0f);
 		glUniform3f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.specular"), 1.0f, 1.0f, 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.linear"), 0.09);
-		glUniform1f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.quadratic"), 0.032);*/
+		glUniform1f(glGetUniformLocation(lightingShader.getProgram(), "spotLight.quadratic"), 0.032);
 
 		GLuint modelLoc = glGetUniformLocation(lightingShader.getProgram(), "model");
 		GLuint viewLoc = glGetUniformLocation(lightingShader.getProgram(), "view");

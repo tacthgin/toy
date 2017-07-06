@@ -105,7 +105,6 @@ vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
 	diffuse *= intensity;
 
-	
 	vec3 reflectDir = reflect(-lightDir, norm);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 	vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
@@ -130,6 +129,8 @@ void main()
 
 	for(int i = 0; i < NR_POINT_LIGHTS; i++)
 		result += calcPointLight(pointLight[i], norm, FragPos, viewDir);
+
+	result += calcSpotLight(spotLight, norm, FragPos, viewDir);
 
 	color = vec4(result, 1.0f);
 };
