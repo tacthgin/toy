@@ -37,6 +37,11 @@ void Model::processNode(aiNode * node, const aiScene * scene)
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		_meshes.push_back(processMesh(mesh, scene));
 	}
+
+	for (GLuint i = 0; i < node->mNumChildren; i++)
+	{
+		processNode(node->mChildren[i], scene);
+	}
 }
 
 Mesh Model::processMesh(aiMesh * mesh, const aiScene * scene)
@@ -79,11 +84,9 @@ Mesh Model::processMesh(aiMesh * mesh, const aiScene * scene)
 	if (mesh->mMaterialIndex >= 0)
 	{
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-		vector<Texture> diffuseMaps = loadMaterialTextures(material,
-			aiTextureType_DIFFUSE, "texture_diffuse");
+		vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-		vector<Texture> specularMaps = loadMaterialTextures(material,
-			aiTextureType_SPECULAR, "texture_specular");
+		vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	}
 
@@ -109,10 +112,6 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial * mat, aiTextureType
 		}
 		if (!skip)
 		{
-			for (GLuint j = 0; j < _loadedTextures.size(); i++)
-			{
-
-			}
 			Texture texture;
 			texture.id = TextureFromFile(str.C_Str(), _directory);
 			texture.type = typeName;
