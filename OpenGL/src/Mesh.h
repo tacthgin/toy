@@ -28,6 +28,7 @@ class Mesh
 {
 public:
 	Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indices, const std::vector<Texture>& textures);
+	~Mesh();
 	void draw(const Shader& shader);
 private:
 	void setupMesh();

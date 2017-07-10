@@ -10,6 +10,13 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indic
 	setupMesh();
 }
 
+Mesh::~Mesh()
+{
+	glDeleteVertexArrays(1, &_VAO);
+	glDeleteBuffers(1, &_VBO);
+	glDeleteBuffers(1, &_EBO);
+}
+
 void Mesh::draw(const Shader & shader)
 {
 	GLuint diffuseNr = 1;

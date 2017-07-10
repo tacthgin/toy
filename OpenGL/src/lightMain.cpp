@@ -81,7 +81,7 @@ void do_movement(GLfloat deltaTime)
 	}
 }
 
-int main()
+int light_main()
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
