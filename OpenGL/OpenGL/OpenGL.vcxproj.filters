@@ -18,12 +18,24 @@
     <ClCompile Include="..\src\lightMain.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Mesh.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Model.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Shader.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Camera.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Mesh.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Model.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

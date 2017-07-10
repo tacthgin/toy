@@ -92,7 +92,7 @@ void Shader::use()
 	}
 }
 
-GLint Shader::getProgram()
+GLint Shader::getProgram() const
 {
 	return _program;
 }
