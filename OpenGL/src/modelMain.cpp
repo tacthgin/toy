@@ -119,7 +119,7 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	Shader modelShader("../shaders/model.vs", "../shaders/model.frag");
-	Model loadedModel("../images/model/Ferrari 599 GT_RC-Model_2010.obj");
+	Model loadedModel("../images/nanosuit/nanosuit.obj");
 
 	GLfloat lastFrame = glfwGetTime();
 	while (!glfwWindowShouldClose(window))
@@ -132,12 +132,19 @@ int main()
 
 		do_movement(deltaTime);
 
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		modelShader.use();
 
 		GLuint modelLoc = glGetUniformLocation(modelShader.getProgram(), "model");
 		GLuint viewLoc = glGetUniformLocation(modelShader.getProgram(), "view");
 		GLuint projectionLoc = glGetUniformLocation(modelShader.getProgram(), "projection");
+
+		mat4 model;
+		model = translate(model, vec3(0.0f, -1.75f, 0.0f));
+		model = scale(model, vec3(0.2f, 0.2f, 0.2f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 
 		mat4 view = camera.getViewMatrix();
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
