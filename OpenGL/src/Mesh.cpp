@@ -29,9 +29,10 @@ void Mesh::draw(const Shader & shader)
 			ss << specularNr++;
 		string number = ss.str();
 
-		glUniform1f(glGetUniformLocation(shader.getProgram(), (name + number).c_str()), i);
+		glUniform1f(glGetUniformLocation(shader.getProgram(), ("matrial." + name).c_str()), i);
 		glBindTexture(GL_TEXTURE_2D, _textures[i].id);
 	}
+	glUniform1f(glGetUniformLocation(shader.getProgram(), "matrial.shininess"), 32.0f);
 
 	glBindVertexArray(_VAO);
 	glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);

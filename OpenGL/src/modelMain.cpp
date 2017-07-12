@@ -119,8 +119,66 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	Shader modelShader("../shaders/model.vs", "../shaders/model.frag");
+	Shader lampShader("../shaders/lamp.vs", "../shaders/lamp.frag");
+
 	Model loadedModel("../images/nanosuit/nanosuit.obj");
 
+	GLfloat vertices[] = {
+		// Positions
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f, -0.5f,  0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f
+	};
+
+	GLuint lightVAO;
+	GLuint VBO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
+	vec3 lightPos(-1.0f, 1.0f, 3.0f);
 	GLfloat lastFrame = glfwGetTime();
 	while (!glfwWindowShouldClose(window))
 	{
@@ -153,7 +211,32 @@ int main()
 		projection = perspective(camera.getAscept(), (float)screenWidth / screenHeight, 0.1f, 100.0f);
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
 
+		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "light.position"), lightPos.x, lightPos.y, lightPos.z);
+		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "light.ambient"), 0.05f, 0.05f, 0.05f);
+		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "light.diffuse"), 0.8f, 0.8f, 0.8f);
+		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "light.specular"), 1.0f, 1.0f, 1.0f);
+		glUniform1f(glGetUniformLocation(modelShader.getProgram(), "light.constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(modelShader.getProgram(), "light.linear"), 0.09f);
+		glUniform1f(glGetUniformLocation(modelShader.getProgram(), "light.quadratic"), 0.032f);
+		vec3 cameraPos = camera.getPos();
+		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "viewPos"), cameraPos.x, cameraPos.y, cameraPos.z);
 		loadedModel.draw(modelShader);
+
+		lampShader.use();
+		modelLoc = glGetUniformLocation(lampShader.getProgram(), "model");
+		viewLoc = glGetUniformLocation(lampShader.getProgram(), "view");
+		projectionLoc = glGetUniformLocation(lampShader.getProgram(), "projection");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+		glBindVertexArray(lightVAO);
+		model = mat4();
+		model = translate(model, lightPos);
+		model = scale(model, vec3(0.2f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glBindVertexArray(lightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
 	}
