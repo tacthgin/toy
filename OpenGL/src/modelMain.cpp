@@ -178,7 +178,7 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
-	vec3 lightPos(-1.0f, 1.0f, 3.0f);
+	vec3 lightPos(-1.0f, 1.0f, 1.0f);
 	GLfloat lastFrame = glfwGetTime();
 	while (!glfwWindowShouldClose(window))
 	{
@@ -195,6 +195,17 @@ int main()
 
 		modelShader.use();
 
+		vec3 cameraPos = camera.getPos();
+		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "viewPos"), cameraPos.x, cameraPos.y, cameraPos.z);
+
+		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "light.position"), lightPos.x, lightPos.y, lightPos.z);
+		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "light.ambient"), 0.05f, 0.05f, 0.05f);
+		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "light.diffuse"), 0.8f, 0.8f, 0.8f);
+		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "light.specular"), 1.0f, 1.0f, 1.0f);
+		glUniform1f(glGetUniformLocation(modelShader.getProgram(), "light.constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(modelShader.getProgram(), "light.linear"), 0.09f);
+		glUniform1f(glGetUniformLocation(modelShader.getProgram(), "light.quadratic"), 0.032f);
+		
 		GLuint modelLoc = glGetUniformLocation(modelShader.getProgram(), "model");
 		GLuint viewLoc = glGetUniformLocation(modelShader.getProgram(), "view");
 		GLuint projectionLoc = glGetUniformLocation(modelShader.getProgram(), "projection");
@@ -211,15 +222,6 @@ int main()
 		projection = perspective(camera.getAscept(), (float)screenWidth / screenHeight, 0.1f, 100.0f);
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
 
-		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "light.position"), lightPos.x, lightPos.y, lightPos.z);
-		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "light.ambient"), 0.05f, 0.05f, 0.05f);
-		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "light.diffuse"), 0.8f, 0.8f, 0.8f);
-		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "light.specular"), 1.0f, 1.0f, 1.0f);
-		glUniform1f(glGetUniformLocation(modelShader.getProgram(), "light.constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(modelShader.getProgram(), "light.linear"), 0.09f);
-		glUniform1f(glGetUniformLocation(modelShader.getProgram(), "light.quadratic"), 0.032f);
-		vec3 cameraPos = camera.getPos();
-		glUniform3f(glGetUniformLocation(modelShader.getProgram(), "viewPos"), cameraPos.x, cameraPos.y, cameraPos.z);
 		loadedModel.draw(modelShader);
 
 		lampShader.use();
