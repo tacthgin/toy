@@ -15,3 +15,6 @@ ExportedObj/
 *.pidb
 *.booproj
 *.svd
+*.ilk
+*.exe
+*.pdb
