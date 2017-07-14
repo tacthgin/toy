@@ -17,3 +17,8 @@ ExportedObj/
 *.ilk
 *.exe
 *.pdb
+*.log
+*.tlog
+*.obj
+*.idb
+*.enc
