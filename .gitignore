@@ -4,7 +4,6 @@
 .opensdf
 *.opendb
 *.db
-Debug
 ExportedObj/
 .consulo/
 *.csproj
