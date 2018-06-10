@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{7297fb4b-14f9-40b7-8b7a-47123b934f68}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Sort.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InsertionSort.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BinarySearch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\QuickSort.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HeapSort.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Sort.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\InsertionSort.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BinarySearch.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\QuickSort.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HeapSort.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
