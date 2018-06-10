@@ -12,7 +12,7 @@ using namespace std;
 using namespace glm;
 
 const int screenWidth = 800;
-const int screenHeight = 600;
+const int screenHeight = 480;
 
 bool keys[1024];
 
