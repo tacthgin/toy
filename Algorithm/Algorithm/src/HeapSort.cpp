@@ -15,7 +15,9 @@ HeapSort::~HeapSort()
 void HeapSort::sort()
 {
 	print("HeapSort Max Heap Front:");
+	//先保证根节点最大
 	buildMaxHeap();
+	//然后把最大值放在最后实现从小到大
 	for (int i = _numbers.size() - 1; i >= 1; i--)
 	{
 		swap(_numbers[0], _numbers[i]);
