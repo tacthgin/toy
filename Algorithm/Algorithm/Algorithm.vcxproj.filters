@@ -24,6 +24,9 @@
     <ClCompile Include="src\HeapSort.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\PriorityQueue.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Sort.h">
@@ -39,6 +42,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\HeapSort.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PriorityQueue.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
