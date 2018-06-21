@@ -14,6 +14,11 @@ Sort::~Sort()
 {
 }
 
+void Sort::sort()
+{
+	cout << "empty sort" << endl;
+}
+
 void Sort::setNumbers(const std::vector<int>& numbers)
 {
 	_numbers = numbers;
